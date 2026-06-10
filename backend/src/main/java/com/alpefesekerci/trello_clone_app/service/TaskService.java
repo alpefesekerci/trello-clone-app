@@ -1,16 +1,17 @@
 package com.alpefesekerci.trello_clone_app.service;
 
-import com.alpefesekerci.trello_clone_app.entity.Task;
+import com.alpefesekerci.trello_clone_app.dto.request.TaskRequest;
+import com.alpefesekerci.trello_clone_app.dto.response.TaskResponse;
 import java.util.List;
 
 public interface TaskService {
-    Task createTask(Task task);
+    TaskResponse createTask(TaskRequest request);
 
-    List<Task> getAllTasks();
+    List<TaskResponse> getAllTasks();
 
-    Task getTaskById(Long id);
+    TaskResponse getTaskById(Long id);
 
-    Task updateTask(Long id, Task taskDetails);
+    TaskResponse updateTask(Long id, TaskRequest request);
 
     void deleteTask(Long id);
 }
