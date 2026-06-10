@@ -5,6 +5,7 @@ import com.alpefesekerci.trello_clone_app.dto.response.TaskResponse;
 import com.alpefesekerci.trello_clone_app.service.TaskService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class TaskController {
     private final TaskService taskService;
 
     @PostMapping
-    public ResponseEntity<TaskResponse> createTask(@RequestBody TaskRequest request) {
+    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
         TaskResponse response = taskService.createTask(request);
         return ResponseEntity.ok(response);
     }
@@ -32,9 +33,9 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @RequestBody TaskRequest request) {
-        TaskResponse taskDetails = taskService.getTaskById(id);
-        return ResponseEntity.ok(taskDetails);
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
+        TaskResponse updatedTask = taskService.updateTask(id, request);
+        return ResponseEntity.ok(updatedTask);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
