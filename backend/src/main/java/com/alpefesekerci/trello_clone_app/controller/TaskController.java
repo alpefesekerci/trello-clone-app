@@ -1,43 +1,57 @@
 package com.alpefesekerci.trello_clone_app.controller;
 
+import com.alpefesekerci.trello_clone_app.dto.request.MoveTaskRequest;
 import com.alpefesekerci.trello_clone_app.dto.request.TaskRequest;
 import com.alpefesekerci.trello_clone_app.dto.response.TaskResponse;
 import com.alpefesekerci.trello_clone_app.service.TaskService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tasks")
 @RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
 
-    @PostMapping
-    public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody TaskRequest request) {
-        TaskResponse response = taskService.createTask(request);
-        return ResponseEntity.ok(response);
+    @PostMapping("/api/lists/{listId}/tasks")
+    public ResponseEntity<TaskResponse> createTask(@PathVariable Long listId,
+                                                   @Valid @RequestBody TaskRequest request) {
+        TaskResponse response = taskService.createTask(listId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @GetMapping
-    public ResponseEntity<List<TaskResponse>> getAllTasks() {
-        List<TaskResponse> tasks = taskService.getAllTasks();
+
+    @GetMapping("/api/lists/{listId}/tasks")
+    public ResponseEntity<List<TaskResponse>> getTasksByListId(@PathVariable Long listId) {
+        List<TaskResponse> tasks = taskService.getTasksByListId(listId);
         return ResponseEntity.ok(tasks);
     }
-    @GetMapping("/{id}")
+
+    @GetMapping("/api/tasks/{id}")
     public ResponseEntity<TaskResponse> getTaskById(@PathVariable Long id) {
         TaskResponse task = taskService.getTaskById(id);
         return ResponseEntity.ok(task);
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id, @Valid @RequestBody TaskRequest request) {
+
+    @PutMapping("/api/tasks/{id}")
+    public ResponseEntity<TaskResponse> updateTask(@PathVariable Long id,
+                                                   @Valid @RequestBody TaskRequest request) {
         TaskResponse updatedTask = taskService.updateTask(id, request);
         return ResponseEntity.ok(updatedTask);
     }
-    @DeleteMapping("/{id}")
+
+    @PutMapping("/api/tasks/{id}/move")
+    public ResponseEntity<TaskResponse> moveTask(@PathVariable Long id,
+                                                 @Valid @RequestBody MoveTaskRequest request) {
+        TaskResponse movedTask = taskService.moveTask(id, request);
+        return ResponseEntity.ok(movedTask);
+    }
+
+    @DeleteMapping("/api/tasks/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
         return ResponseEntity.noContent().build();

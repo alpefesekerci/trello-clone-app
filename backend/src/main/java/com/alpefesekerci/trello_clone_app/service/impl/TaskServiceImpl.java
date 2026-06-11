@@ -1,9 +1,12 @@
 package com.alpefesekerci.trello_clone_app.service.impl;
 
+import com.alpefesekerci.trello_clone_app.dto.request.MoveTaskRequest;
 import com.alpefesekerci.trello_clone_app.dto.request.TaskRequest;
 import com.alpefesekerci.trello_clone_app.dto.response.TaskResponse;
+import com.alpefesekerci.trello_clone_app.entity.BoardList;
 import com.alpefesekerci.trello_clone_app.entity.Task;
 import com.alpefesekerci.trello_clone_app.exception.ResourceNotFoundException;
+import com.alpefesekerci.trello_clone_app.repository.BoardListRepository;
 import com.alpefesekerci.trello_clone_app.repository.TaskRepository;
 import com.alpefesekerci.trello_clone_app.service.TaskService;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +20,18 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
 
     private final TaskRepository taskRepository;
+    private final BoardListRepository boardListRepository;
 
     @Override
-    public TaskResponse createTask(TaskRequest request) {
+    public TaskResponse createTask(Long boardListId, TaskRequest request) {
+        BoardList boardList = boardListRepository.findById(boardListId)
+                .orElseThrow(() -> new ResourceNotFoundException("Liste", boardListId));
+
         Task task = Task.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .status(request.getStatus())
+                .position(request.getPosition())
+                .boardList(boardList)
                 .build();
 
         Task savedTask = taskRepository.save(task);
@@ -31,9 +39,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponse> getAllTasks() {
-        List<Task> tasks = taskRepository.findAll();
-        return tasks.stream()
+    public List<TaskResponse> getTasksByListId(Long boardListId) {
+        if (!boardListRepository.existsById(boardListId)) {
+            throw new ResourceNotFoundException("Liste", boardListId);
+        }
+
+        return taskRepository.findByBoardListIdOrderByPositionAsc(boardListId).stream()
                 .map(this::convertToResponse)
                 .collect(Collectors.toList());
     }
@@ -53,10 +64,25 @@ public class TaskServiceImpl implements TaskService {
 
         existingTask.setTitle(request.getTitle());
         existingTask.setDescription(request.getDescription());
-        existingTask.setStatus(request.getStatus());
+        existingTask.setPosition(request.getPosition());
 
         Task updatedTask = taskRepository.save(existingTask);
         return convertToResponse(updatedTask);
+    }
+
+    @Override
+    public TaskResponse moveTask(Long id, MoveTaskRequest request) {
+        Task task = taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Görev", id));
+
+        BoardList targetList = boardListRepository.findById(request.getTargetListId())
+                .orElseThrow(() -> new ResourceNotFoundException("Hedef liste", request.getTargetListId()));
+
+        task.setBoardList(targetList);
+        task.setPosition(request.getPosition());
+
+        Task movedTask = taskRepository.save(task);
+        return convertToResponse(movedTask);
     }
 
     @Override
@@ -72,8 +98,7 @@ public class TaskServiceImpl implements TaskService {
                 .id(task.getId())
                 .title(task.getTitle())
                 .description(task.getDescription())
-                .status(task.getStatus())
+                .position(task.getPosition())
                 .build();
     }
 }
-
