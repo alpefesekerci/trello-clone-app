@@ -5,7 +5,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Uygulamanın web katmanı (MVC) ayarlarını özelleştiren yapılandırma sınıfı.
+ * Uygulamanın web katmanı (MVC-Model-View-Controller) ayarlarını özelleştiren yapılandırma sınıfı.
  * Tarayıcıların güvenlik mekanizması olan CORS (Cross-Origin Resource Sharing) krizlerini
  * baştan çözmek ve frontend'in backend API'sine güvenle erişmesini sağlamak için oluşturulmuştur.
  */

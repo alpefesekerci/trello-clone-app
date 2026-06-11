@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @RestController
-@RequestMapping("/api/boards") // REST standartları gereği rotalar çoğul isimlerle (boards) adlandırılır.
+@RequestMapping("/api/boards") // REST standartları gereği rotalar çoğul isimlerle adlandırılır.
 @RequiredArgsConstructor
 public class BoardController {
 
