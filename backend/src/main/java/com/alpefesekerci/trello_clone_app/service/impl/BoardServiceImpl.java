@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
+    // Bağımlılıkların (Dependency) 'final' olarak tanımlanması ve @RequiredArgsConstructor kullanılması,
+    // Spring'in Constructor Injection yapmasını zorunlu kılar. Bu da sınıfı test edilebilir ve thread-safe yapar.
     private final BoardRepository boardRepository;
 
     @Override
@@ -68,6 +70,14 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.delete(board);
     }
 
+    // --- MAPPING (DÖNÜŞÜM) METOTLARI ---
+
+    /**
+     * Veritabanı modelini (Board), API yanıt modeline (BoardResponse) dönüştürür.
+     * MİMARİ NOT: Infinite Recursion (Sonsuz Döngü) Çözümü.
+     * Board -> BoardList -> Task ilişkilerinde nesnelerin birbirini sürekli çağırmasını engellemek için,
+     * her alt koleksiyon kendi ilgili DTO sınıfına haritalanır (Map edilir).
+     */
     private BoardResponse convertToResponse(Board board) {
         List<BoardListResponse> listResponses = board.getLists().stream()
                 .map(this::convertListToResponse)
@@ -82,6 +92,9 @@ public class BoardServiceImpl implements BoardService {
                 .build();
     }
 
+    /**
+     * BoardList Entity'sini DTO'ya dönüştürür.
+     */
     private BoardListResponse convertListToResponse(BoardList boardList) {
         List<TaskResponse> taskResponses = boardList.getTasks().stream()
                 .map(this::convertTaskToResponse)
@@ -95,6 +108,9 @@ public class BoardServiceImpl implements BoardService {
                 .build();
     }
 
+    /**
+     * Task Entity'sini DTO'ya dönüştürür. (Silsilenin en alt basamağı)
+     */
     private TaskResponse convertTaskToResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())

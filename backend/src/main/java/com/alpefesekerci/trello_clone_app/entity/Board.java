@@ -26,13 +26,22 @@ public class Board {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    // Panonun oluşturulma zamanını denetim amacıyla tutuyoruz.
     private LocalDateTime createdAt;
 
+    /** Pano silindiğinde veya listeden çıkarıldığında
+    * altındaki tüm listelerin de veritabanından temizlenmesini garanti eder.
+    * UI tarafında sürükle-bırak işlemleri için
+    * listeler her zaman 'position' değerine göre sıralı getirilir.
+     */
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("position ASC")
     @Builder.Default
     private List<BoardList> lists = new ArrayList<>();
 
+    /**
+     * Entity veritabanına ilk kez kaydedilmeden hemen önce tetiklenir.
+     */
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

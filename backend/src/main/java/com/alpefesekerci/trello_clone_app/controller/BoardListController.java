@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Liste (BoardList) işlemleri için dış dünyaya açılan REST API Controller'ı.
+ */
 @RestController
 @RequiredArgsConstructor
 public class BoardListController {

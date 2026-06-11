@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Görev (Kart/Task) işlemleri için API uç noktalarını yöneten Controller sınıfı.
+ * BoardListController'da olduğu gibi, bu sınıfta da hiyerarşik (sub-resource) ve
+ * düz (flat) URL yapıları, kaynakların bağımlılık durumuna göre bilinçli olarak harmanlanmıştır.
+ */
 @RestController
 @RequiredArgsConstructor
 public class TaskController {

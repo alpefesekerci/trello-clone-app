@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TaskServiceImpl implements TaskService {
 
+    // Hem görevlerin kendisini yönetmek hem de eklenecekleri/taşınacakları
+    // listeleri doğrulamak için her iki repository de enjekte edilmiştir.
     private final TaskRepository taskRepository;
     private final BoardListRepository boardListRepository;
 
@@ -93,6 +95,12 @@ public class TaskServiceImpl implements TaskService {
         taskRepository.delete(existingTask);
     }
 
+    // --- MAPPING (DÖNÜŞÜM) METOTLARI ---
+
+    /**
+     * Task Entity'sini DTO'ya dönüştürür.
+     * Hiyerarşinin son noktası olduğu için iç içe (nested) dönüşüm metotları çağırmasına gerek yoktur.
+     */
     private TaskResponse convertToResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())

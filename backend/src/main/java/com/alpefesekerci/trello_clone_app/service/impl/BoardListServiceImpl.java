@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Pano listeleri (Kolonlar) için iş mantığını yürüten servis katmanı.
+ * Bu sınıf sadece listeleri değil, aynı zamanda listelerin bağlı olduğu Panoların (Board)
+ * geçerliliğini de kontrol ederek veri bütünlüğünü sağlar.
+ */
 @Service
 @RequiredArgsConstructor
 public class BoardListServiceImpl implements BoardListService {
@@ -77,6 +82,13 @@ public class BoardListServiceImpl implements BoardListService {
         boardListRepository.delete(boardList);
     }
 
+    // --- MAPPING (DÖNÜŞÜM) METOTLARI ---
+
+    /**
+     * Veritabanı modelini güvenli Response DTO'ya çevirir.
+     * Sonsuz döngü (Infinite Recursion) oluşmasını engellemek için, listenin içindeki
+     * görevleri Entity yerine DTO (TaskResponse) olarak haritalar.
+     */
     private BoardListResponse convertToResponse(BoardList boardList) {
         List<TaskResponse> taskResponses = boardList.getTasks().stream()
                 .map(this::convertTaskToResponse)
@@ -90,6 +102,9 @@ public class BoardListServiceImpl implements BoardListService {
                 .build();
     }
 
+    /**
+     * Görev nesnelerini Controller'a taşınabilir hale getirir.
+     */
     private TaskResponse convertTaskToResponse(Task task) {
         return TaskResponse.builder()
                 .id(task.getId())
