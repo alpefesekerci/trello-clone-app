@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class BoardServiceImpl implements BoardService {
 
     // Bağımlılıkların (Dependency) 'final' olarak tanımlanması ve @RequiredArgsConstructor kullanılması,
-    // Spring'in Constructor Injection yapmasını zorunlu kılar. Bu da sınıfı test edilebilir ve thread-safe yapar.
+    // Spring'in Constructor Injection yapmasını zorunlu kılar. Sınıfı test edilebilir ve thread-safe yapar.
     private final BoardRepository boardRepository;
 
     @Override

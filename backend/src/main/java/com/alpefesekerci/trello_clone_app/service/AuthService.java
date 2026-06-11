@@ -1,5 +1,5 @@
 package com.alpefesekerci.trello_clone_app.service;
 
-public interface UserService {
+public interface AuthService {
 
 }
